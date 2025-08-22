@@ -1,0 +1,42 @@
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>
+<div class="container mt-5">
+  <h2 class="mb-4">🛒 Your Cart</h2>
+  <div class="d-flex justify-content-end mb-3">
+  </div>
+  <div class="button-container">
+    <button class="continue-btn" (click)="dashBoard()">Continue Shopping</button>
+  </div>
+  <div *ngIf="items.length===0" class="alert alert-info">
+    Your cart is empty.
+  </div>
+  <div *ngIf="cart.length > 0" class="table-responsive">
+    <table class="table table-bordered align-middle shadow-sm">
+      <thead class="table-light text-center">
+        <tr>
+          <th>image</th>
+          <th>Product</th>
+          <th>quantity</th>
+          <th>Price</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        <tr *ngFor="let item of cart;">
+          <td><img [src]="item.imageUrl" height="100px" width="100px" alt=""></td>
+          <td>{{ item.productName }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>₹{{ item.total }}</td>
+          <td>
+            <button (click)="removeItem(item.id)" class="btn btn-sm btn-danger">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <h4>Total: ₹{{ totalPrice }}</h4>
+
+    </div>
+  </div>
+</div>

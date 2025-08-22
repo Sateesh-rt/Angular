@@ -1,0 +1,136 @@
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>
+
+<nav class="navbar">
+  <a class="navbar-brand" routerLink="/">🛒 E-Commerce</a>
+
+  <div class="navbar-search">
+    <input type="text" class="form-control" placeholder="Search products..." />
+  </div>
+
+  <div class="navbar-login">
+    <button class="btn-login" (click)="openModal(loginTemplate)">Login</button>
+  </div>
+</nav>
+<marquee behavior="alternate" direction="left" scrollamount="20">Welcome To Ecommerce....</marquee>
+
+<div class="hero-container">
+
+  <div class="hero-left">
+
+  </div>
+
+  <div class="hero-right">
+    <h2>Welcome to E-Commerce</h2>
+    <p>Find the best deals on Mobiles, Fashion, and Electronics.</p>
+
+    <div class="categories">
+      <div class="category-card">
+        <img src="./assets/images/nav4.jpg" alt="Mobiles" />
+      </div>
+      <div class="category-card">
+        <img src="./assets/images/nav5.jpg" alt="Fashion" />
+      </div>
+      <div class="category-card">
+        <img src="./assets/images/nav3.jpg" alt="Electronics" />
+      </div>
+    </div>
+  </div>
+
+</div>
+<footer class="footer">
+  <p>&copy; 2025 E-Commerce. All Rights Reserved.</p>
+</footer>
+
+
+
+
+<ng-template #loginTemplate>
+  <div class="modal-header">
+    <h5 class="modal-title">Account Login</h5>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="loginForm">
+      <label for="name">Username</label>
+      <input id="name" formControlName="name" class="form-control mb-2" placeholder="Enter Username" />
+      <div *ngIf="loginForm.get('name')?.invalid && loginForm.get('name')?.touched" class="text-danger small ">
+        Enter Valid Username
+      </div>
+      <label for="pass">Password</label>
+      <input id="pass" type="password" formControlName="password" class="form-control mb-2"
+        placeholder="Enter Password" />
+      <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger small">
+        Enter Valid Password
+      </div>
+      <label for="role">Role</label>
+      <select id="role" formControlName="role" class="form-control">
+        <option value="">Select Role</option>
+        <option value="Admin">Admin</option>
+        <option value="User">User</option>
+      </select>
+      <div *ngIf="loginForm.get('role')?.invalid && loginForm.get('role')?.touched" class="text-danger small">
+        Role is required
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer d-flex justify-content-between align-items-center w-100">
+    <span class="text-muted ">
+      Don’t have an account?
+      <a (click)="openSignup(signupTemplate)" class="text-color-blue">Register here</a>
+    </span>
+    <div>
+      <button class="btn btn-outline-secondary me-2" (click)="modalRef?.hide()">Cancel</button>
+      <button class="btn btn-primary" (click)="onLoginSubmit()">Login</button>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #signupTemplate>
+  <div class="modal-header">
+    <h5 class="modal-title">Create Account</h5>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="signupForm">
+
+      <input formControlName="name" class="form-control mb-2" placeholder="Full Name" name="name" />
+      <div *ngIf="signupForm.get('name')?.invalid && signupForm.get('name')?.touched" class="text-danger small">Name is
+        required</div>
+
+      <input formControlName="email" class="form-control mb-2" placeholder="Email Address" name="email" />
+      <div *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched" class="text-danger small">Valid
+        email required</div>
+
+      <input formControlName="mobile" class="form-control mb-2" placeholder="Mobile Number" name="mobile" />
+      <div *ngIf="signupForm.get('mobile')?.invalid && signupForm.get('mobile')?.touched" class="text-danger small">
+        Valid 10-digit number required</div>
+
+      <select formControlName="role" name="role" class="form-control mb-2">
+        <option value="">Select Role</option>
+        <option value="Admin">Admin</option>
+        <option value="User">User</option>
+      </select>
+      <div *ngIf="signupForm.get('role')?.invalid && signupForm.get('role')?.touched" class="text-danger small">Role is
+        required</div>
+
+      <input type="password" formControlName="password" class="form-control mb-2" placeholder="Password"
+        name="password" />
+      <div *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched" class="text-danger small">
+        Password must be at least 6 characters
+      </div>
+
+      <input type="password" formControlName="confirmPassword" class="form-control" placeholder="Confirm Password"
+        name="confirmPassword" />
+      <div *ngIf="signupForm.errors?.['mismatch'] && signupForm.get('confirmPassword')?.touched"
+        class="text-danger small">
+        Passwords do not match
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline-secondary me-2" (click)="modalRef?.hide()">Cancel</button>
+    <button class="btn btn-success" (click)="confirmSubmit()">Register</button>
+  </div>
+
+
+</ng-template>
