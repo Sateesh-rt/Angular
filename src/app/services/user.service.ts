@@ -20,7 +20,7 @@ export interface LoginRequest {
   providedIn: 'root'
 })
 export class UserService {
-private baseUrl = 'http://localhost:9090/api/user';
+private baseUrl = 'http://localhost:8087/api/user';
   constructor(private http:HttpClient) { }
 
   registerUser(user: User): Observable<User> {
@@ -29,4 +29,6 @@ private baseUrl = 'http://localhost:9090/api/user';
    loginUser(loginData: LoginRequest): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/login`, loginData);
   }
+
+  
 }

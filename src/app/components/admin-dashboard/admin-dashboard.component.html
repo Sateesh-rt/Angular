@@ -5,16 +5,15 @@
   <i class="fa-brands fa-youtube"></i>
 
   <div class="ms-auto d-flex align-items-center">
-    <div class="dropdown me-3">
-      <button class="btn btn-outline-dark dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown"
-        aria-expanded="false">
-        👤 User
-      </button>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-        <li><span class="dropdown-item-text"><strong>👤 Name:</strong> {{ username }}</span></li>
-
-        <li><span class="dropdown-item-text"><strong>🧾 Role:</strong> {{ userRole }}</span></li>
-      </ul>
+   <div class="dropdown me-3">
+      
+     <img src="/assets/images/profile.jpeg" 
+             alt="User Avatar" 
+             class="rounded-circle" 
+             width="40" height="40" 
+             style="cursor: pointer;"
+             (click)="goToUserDetails()"/>
+      
     </div>
 
 
@@ -67,7 +66,7 @@
             <label class="form-label">Product Image <span class="text-danger">*</span></label><br>
 
             
-            <input type="file" #fileInput hidden (change)="onImageSelected($event)" />
+            <input   type="file" #fileInput hidden (change)="onImageSelected($event)" />
 
           
             <button type="button" class="btn btn-primary btn-sm me-2" (click)="fileInput.click()">Upload</button>

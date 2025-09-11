@@ -21,7 +21,7 @@ export class NavbarComponent implements OnInit {
   modalRef?: BsModalRef;
   loginForm!: FormGroup;
   signupForm!: FormGroup;
-  responseData:any;
+  responseData: any;
 
   constructor(
     private modalService: BsModalService,
@@ -30,7 +30,7 @@ export class NavbarComponent implements OnInit {
     private userService: UserService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-  
+
 
   ) { }
 
@@ -43,7 +43,7 @@ export class NavbarComponent implements OnInit {
       role: ['', Validators.required]
 
     });
-   
+
 
     // SIGNUP FORM
     this.signupForm = this.fb.group({
@@ -75,15 +75,16 @@ export class NavbarComponent implements OnInit {
         name: this.loginForm.value.name.trim(),
         password: this.loginForm.value.password.trim(),
         role: this.loginForm.value.role
+
       };
-       this.userService.loginUser(loginData).subscribe({
+      this.userService.loginUser(loginData).subscribe({
         next: (res) => {
-          
-          
+
+
           this.modalRef?.hide();
-          this.responseData=res;
-              // console.log(res);
-              
+          this.responseData = res;
+          // console.log(res);
+
           // Step 1: Show success alert with 2s loading
           Swal.fire({
             title: 'Login Successful!',
@@ -94,25 +95,26 @@ export class NavbarComponent implements OnInit {
             showConfirmButton: false,
             didOpen: () => {
               Swal.showLoading();
-              
+
             },
             willClose: () => {
               // Step 2: After 2s, redirect based on role
-             
-             
-              localStorage.setItem('user', JSON.stringify(res));
 
-              if (res.role === 'Admin' && res.password===loginData.password) {
+
+              localStorage.setItem('user', JSON.stringify(res));
+              if (res.role?.toLowerCase() === 'admin') {
                 this.router.navigate(['/admin-dashboard']);
-                
-              } else if (res.role === 'User') {
+              } else if (res.role?.toLowerCase() === 'user') {
                 this.router.navigate(['/user-dashboard']);
+              } else {
+                // fallback → unknown role
+                this.router.navigate(['/navbar']);
               }
             }
           });
         },
         error: (err) => {
-          console.error('Login failed:', err);       
+          console.error('Login failed:', err);
           Swal.fire({
             icon: 'error',
             title: 'Login Failed',
@@ -123,7 +125,7 @@ export class NavbarComponent implements OnInit {
       });
     } else {
       this.loginForm.markAllAsTouched();
-      this.messageService.add({severity:'error', summary:'Error', detail:'Fill your login details'})
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Fill your login details' })
     }
   }
 
@@ -141,7 +143,7 @@ export class NavbarComponent implements OnInit {
           this.messageService.add({ severity: 'info', summary: 'Cancelled', detail: 'Submission Cancelled' });
         }
       });
-    } else{
+    } else {
       this.signupForm.markAllAsTouched();
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed your Requied fields' })
     }
@@ -149,7 +151,7 @@ export class NavbarComponent implements OnInit {
 
   onSignupSubmit() {
     if (this.signupForm.valid) {
-      
+
       this.userService.registerUser(this.signupForm.value).subscribe({
         next: (res) => {
           Swal.fire({
@@ -163,7 +165,7 @@ export class NavbarComponent implements OnInit {
             }
           });
           this.modalRef?.hide();
-        
+
           // this.signupForm.reset();
         },
         error: (err) => {

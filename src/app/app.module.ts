@@ -23,6 +23,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 
 import { CartService } from './services/cart.service';
+import { DetailsComponent } from './components/details/details.component';
 
 
 @NgModule({
@@ -32,6 +33,7 @@ import { CartService } from './services/cart.service';
     AdminDashboardComponent,
     UserDashboardComponent,
     CartComponent,
+    DetailsComponent,
   ],
   imports: [
     BrowserModule,

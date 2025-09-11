@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ProductService {
-  private baseUrl = 'http://localhost:9090/api/products';
+  private baseUrl = 'http://localhost:8087/api/products';
   // private addurl='http://localhost:9090/api/products/add';
 
  
@@ -23,7 +23,7 @@ export class ProductService {
 
 
   updateProduct(id: number, productData: FormData): Observable<Product> {
-    return this.http.put<Product>(`${this.baseUrl}/${id}`, productData);
+    return this.http.put<Product>(`${this.baseUrl}/update/${id}`, productData);
   }
 
   deleteProduct(id: number): Observable<any> {

@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService } from 'src/app/services/cart.service';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
-
+import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import{ DetailsService } from 'src/app/services/details.service';
 
 @Component({
   selector: 'app-cart',
@@ -15,12 +17,18 @@ export class CartComponent implements OnInit {
   items: any[] = [];  // cart items
   total: number = 0;  // total price
   totalPrice: number = 0;
+  bankForm!: FormGroup;
+  modalRef?: any;
+  
 
 
   constructor(private router: Router,
     private cartService: CartService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private fb: FormBuilder, 
+    private modalService: BsModalService,
+    private detailsService: DetailsService
 
   ) { }
 
@@ -30,6 +38,7 @@ export class CartComponent implements OnInit {
 
     this.cartService.getCart(user.id).subscribe((data: any[]) => {
       console.log(data);
+      this.initbankForm()
 
       if (data.length > 0) {
         this.cart = data; // first cart
@@ -42,6 +51,16 @@ export class CartComponent implements OnInit {
 
       }
 });
+
+  }
+   initbankForm(){
+     this.bankForm = this.fb.group({
+      bankName: ['', Validators.required],
+      branchName: ['', Validators.required],
+      accountHolderName: ['', Validators.required],
+      ifscCode: ['', [Validators.required, Validators.pattern(/^[A-Z]{4}0[0-9]{6}$/)]],
+      accountNumber: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(18)]]
+    });
   }
   removeItem(itemId: number) {
     this.confirmationService.confirm({
@@ -69,5 +88,39 @@ export class CartComponent implements OnInit {
   dashBoard() {
     this.router.navigate(['/user-dashboard']);
   }
+
+    openModal(template: TemplateRef<any>) {
+      this.modalRef = this.modalService.show(template);
+    }
+   closeModal() {
+    if (this.modalRef) {
+      this.modalRef.hide();  // ✅ Correct way to close modal
+      this.modalRef = undefined;
+    }
+  }
+
+  // ✅ Submit Bank Form
+  submitBankForm() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = user.id;
+    
+    if (this.bankForm.valid) {
+      
+      this.detailsService.addBankDetails(this.bankForm.value,userId).subscribe({
+        next: (res) => {
+          console.log('Bank details submitted successfully', res);
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Bank details submitted successfully' });
+          this.closeModal();  // Close modal on success
+        },
+        error: (err) => {
+          console.error('Error submitting bank details', err);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to submit bank details' });
+        }
+      });
+    } else {
+      this.closeModal();
+    }
+  }
+  
 }
 

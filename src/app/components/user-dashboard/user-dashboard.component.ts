@@ -50,7 +50,7 @@ export class UserDashboardComponent implements OnInit {
         this.cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
       });
     }
-
+    
     this.username = user.name;
 
     const role = JSON.parse(localStorage.getItem('role') || '{}');
@@ -144,7 +144,7 @@ export class UserDashboardComponent implements OnInit {
       quantity: 1
     };
     this.cartService.addToCart(userId, cart).subscribe((data) => {
-      this.cartCount += 1; // Just increment count locally
+      this.cartCount += 0; // Just increment count locally
       this.meassageService.add({ severity: 'success', summary: 'Added', detail: `${product.name} added to cart` });
     });
   }
@@ -173,5 +173,8 @@ export class UserDashboardComponent implements OnInit {
   }
   cart() {
     this.router.navigate(['/cart'])
+  }
+   goToUserDetails() {
+    this.router.navigate(['/details']);
   }
 }

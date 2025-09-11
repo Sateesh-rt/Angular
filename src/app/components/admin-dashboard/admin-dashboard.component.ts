@@ -7,9 +7,6 @@ import Swal from 'sweetalert2';
 import { MessageService } from 'primeng/api';
 import { UserService } from 'src/app/services/user.service';
 
-
-
-
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
@@ -28,7 +25,7 @@ export class AdminDashboardComponent implements OnInit {
   selectedImageUrl: string | null = null;
   imageFile: File | null = null;
   showModal: boolean = false;
-  touch: boolean = false;
+  
 
 
 
@@ -58,7 +55,7 @@ export class AdminDashboardComponent implements OnInit {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
-      price: [null, Validators.required],
+      price: ['', Validators.required],
       category: ['', Validators.required],
 
     });
@@ -95,10 +92,10 @@ export class AdminDashboardComponent implements OnInit {
 
 
   onSubmit(): void {
-    // 🔍 If creating a new product, image is required
-    if (this.productForm.invalid || (!this.imageFile === null || this.imageUrl === '')) {
-      this.touch = true;
-      if (this.touch) {
+    
+    if (this.productForm.invalid || (!this.imageFile === null || this.imageUrl === null)) {
+     
+      
         this.productForm.markAllAsTouched();
 
         Swal.fire({
@@ -106,8 +103,8 @@ export class AdminDashboardComponent implements OnInit {
           title: 'Form Incomplete',
           text: 'Please fill all fields and upload an image.',
           confirmButtonColor: '#d33'
-        })
-      };
+        });
+      
       return;
     }
 
@@ -224,6 +221,9 @@ export class AdminDashboardComponent implements OnInit {
         cancelButtonColor: 'Ok'
       })
     }
+  }
+  goToUserDetails() {
+    this.router.navigate(['/details']); 
   }
 }
 
