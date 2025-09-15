@@ -28,6 +28,7 @@ export class UserDashboardComponent implements OnInit {
   filteredProducts: Product[] = [];
   selectedPriceRanges: { min: number; max: number }[] = [];
   userRole: string = '';
+  quantity: number = 0;
 
 
 
@@ -123,31 +124,142 @@ export class UserDashboardComponent implements OnInit {
   }
 
 
+fetchProducts(): void {
+  this.productService.getProducts().subscribe((data) => {
+    this.products = data;
 
-  fetchProducts(): void {
-    this.productService.getProducts().subscribe((data) => {
-      this.products = data;
-
-      this.applyFilters();
-    });
-  }
-
-
-
-  addToCart(product: any) {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const userId = user.id;
-    const cart = {
+
+    if (userId) {
+      this.cartService.getCartItems(userId).subscribe((cartItems) => {
+        this.cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+        this.products.forEach((product) => {
+          const cartItem = cartItems.find(ci => ci.productName === product.name);
+          if (cartItem) {
+            product.quantity = cartItem.quantity;
+            product.cartItemId = cartItem.id;
+          }
+        });
+
+        this.applyFilters();
+      });
+    } else {
+      this.applyFilters();
+    }
+  });
+}
+
+addToCart(product: any) {
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+  if (!user || !user.id) {
+    Swal.fire({
+      title: 'Please login to add items to cart',
+      icon: 'warning',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Login'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/navbar']);
+      }
+    });
+    return;
+  }
+
+  const userId = user.id;
+  const cartItem = {
+    productName: product.name,
+    price: product.price,
+    imagePath: product.imagePath,
+    quantity: 1
+  };
+
+  this.cartService.addToCart(userId, cartItem).subscribe({
+    next: (res) => {
+      // ✅ res = saved Cart entity from backend
+      product.quantity = res.quantity;
+      product.cartItemId = res.id;
+
+      this.cartCount++;
+      this.meassageService.add({
+        severity: 'success',
+        summary: 'Added',
+        detail: `${product.name} added to cart`
+      });
+    },
+    error: (err) => {
+      console.error('Error adding to cart:', err);
+      this.meassageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Could not add item to cart'
+      });
+    }
+  });
+}
+increase(product: any) {
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+  if (!user || !user.id) {
+    Swal.fire({
+      title: 'Please login to add items to cart',
+      icon: 'warning',
+      confirmButtonText: 'Login'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/navbar']);
+      }
+    });
+    return;
+  }
+
+  // Case 1: Not yet in cart → Add first time
+  if (!product.cartItemId) {
+    const cartItem = {
       productName: product.name,
       price: product.price,
       imagePath: product.imagePath,
       quantity: 1
     };
-    this.cartService.addToCart(userId, cart).subscribe((data) => {
-      this.cartCount += 0; // Just increment count locally
-      this.meassageService.add({ severity: 'success', summary: 'Added', detail: `${product.name} added to cart` });
+
+    this.cartService.addToCart(user.id, cartItem).subscribe({
+      next: (savedItem) => {
+        product.cartItemId = savedItem.id;
+        product.quantity = savedItem.quantity;
+        this.cartCount++;
+        this.meassageService.add({ severity: 'success', summary: 'Added', detail: `${product.name} added to cart` });
+      },
+      error: (err) => {
+        console.error('Error adding to cart:', err);
+        this.meassageService.add({ severity: 'error', summary: 'Error', detail: 'Could not add item to cart' });
+      }
+    });
+  } 
+  // Case 2: Already in cart → Update quantity
+  else {
+    const newQuantity = (product.quantity || 0) + 1;
+    this.cartService.updateQuantity(product.cartItemId, newQuantity).subscribe(updated => {
+      product.quantity = updated.quantity;
     });
   }
+}
+
+
+decrease(product: any) {
+  if (product.cartItemId && product.quantity > 1) {
+    this.meassageService.add({ severity: 'success', summary: 'Removed', detail: `${product.name} Removed Succesfully` });
+    product.quantity--;
+    this.cartService.updateQuantity(product.cartItemId, product.quantity).subscribe();
+  } else if (product.cartItemId && product.quantity === 1) {
+    this.cartService.removeItem(product.cartItemId).subscribe(() => {
+      product.quantity = 0;
+      product.cartItemId = null;
+    });
+  }
+}
+
 
 
   logout() {
@@ -161,14 +273,16 @@ export class UserDashboardComponent implements OnInit {
 
       }).then(() => {
         localStorage.removeItem('user');
-        this.router.navigate(['/navbar']);
+        this.router.navigate(['/user-dashboard']);
+        window.location.reload();
       })
     } else {
-      Swal.fire({
-        title: `Account Datails Not Found!..`,
-        confirmButtonText: 'Ok',
-        icon: 'error'
-      })
+      // Swal.fire({
+      //   title: `Account Datails Not Found!..`,
+      //   confirmButtonText: 'Ok',
+      //   icon: 'error'
+      // })
+      this.router.navigate(['/navbar']);
     }
   }
   cart() {

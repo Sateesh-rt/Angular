@@ -8,13 +8,13 @@ import { DetailsComponent } from './components/details/details.component';
 import { AuthGuard } from './authorization/auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/navbar', pathMatch: 'full' },
+  { path: '', redirectTo: '/user-dashboard', pathMatch: 'full' },
 
   { path: 'navbar', component: NavbarComponent },
 
   { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard], data: { roles: ['Admin'] } },   // ✅ only Admin allowed
 
-  { path: 'user-dashboard', component: UserDashboardComponent, canActivate: [AuthGuard], data: { roles: ['User'] } },   // ✅ only User allowed
+  { path: 'user-dashboard', component: UserDashboardComponent  },   // ✅ only User allowed
 
   { path: 'cart', component: CartComponent, canActivate: [AuthGuard], data: { roles: ['User'] } },   // only User can have cart
 

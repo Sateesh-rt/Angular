@@ -24,9 +24,7 @@ export class AuthGuard implements CanActivate {
       }
 
       // ❌ role mismatch → redirect to correct dashboard
-      if (userRole === 'USER') {
-        this.router.navigate(['/user-dashboard']);
-      } else if (userRole === 'ADMIN') {
+      if (userRole === 'ADMIN') {
         this.router.navigate(['/admin-dashboard']);
       } else {
         this.router.navigate(['/']); // fallback

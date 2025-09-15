@@ -26,4 +26,9 @@ export class CartService {
 removeItem(cartItemId: number): Observable<any> {
   return this.http.delete(`${this.baseUrl}/delete/${cartItemId}`, { responseType: 'text' });
 }
+updateQuantity(cartId: number, quantity: number): Observable<any> {
+  return this.http.put<any>(`${this.baseUrl}/update/${cartId}/${quantity}`, {}); 
+}
+
+
 }

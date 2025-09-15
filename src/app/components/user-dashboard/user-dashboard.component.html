@@ -103,6 +103,7 @@
 
 <br>
 
+
 <div *ngIf="display">{{display}}</div>
 
 <div class="container mt-4-auto">
@@ -114,7 +115,23 @@
           <h5 class="card-title">{{ product.name }}</h5>
           <p class="card-text">{{ product.description }}</p>
           <p><strong>₹{{ product.price }}</strong></p>
-          <button class="btn btn-primary" (click)="addToCart(product)">Add to Cart</button>
+
+          <!-- Add to Cart + quantity controls in same row -->
+          <div class="d-flex justify-content-center align-items-center gap-2">
+            <button class="btn btn-primary" (click)="addToCart(product)">
+              Add to Cart
+            </button>
+
+            <!-- Quantity controls (no methods yet) -->
+            <div class="d-flex align-items-center">
+              <button class="btn btn-sm btn-outline-secondary" (click)="decrease(product)">-</button>
+              <span class="mx-2">{{ product.quantity || 0 }}</span>
+
+
+              <button class="btn btn-sm btn-outline-primary" (click)="increase(product)">+</button>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
